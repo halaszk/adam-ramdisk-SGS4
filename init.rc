@@ -90,7 +90,7 @@ loglevel 3
 
     # Directory for staging bindmounts
     mkdir /mnt/secure/staging 0700 root root
-    resturecon -R /mnt/secure/staging
+    restorecon -R /mnt/secure/staging
 
     # Directory-target for where the secure container
     # imagefile directory will be bind-mounted
@@ -165,6 +165,7 @@ on fs
 on post-fs
     # once everything is setup, no need to modify /
     mount rootfs rootfs / ro remount
+
     # mount shared so changes propagate into child namespaces
     mount rootfs rootfs / shared rec
     mount tmpfs tmpfs /mnt/secure private rec
@@ -220,7 +221,7 @@ on post-fs-data
 
     # create basic filesystem structure
     mkdir /data/misc 01771 system misc
-    mkdir /data/misc/audit 02755 audit system
+    mkdir /data/misc/audit 02775 audit system
     mkdir /data/misc/adb 02750 system shell
     mkdir /data/misc/bluedroid 0770 bluetooth net_bt_stack
     mkdir /data/misc/bluetooth 0770 system system
@@ -322,6 +323,7 @@ on post-fs-data
     chmod 0775 /efs/.files/.dx1
     chmod 0775 /efs/.files/.dm33
     chmod 0775 /efs/.files/.mp301
+    restorecon -R /efs
 #]
 
     # If there is no fs-post-data action in the init.<device>.rc file, you
@@ -331,15 +333,12 @@ on post-fs-data
     #setprop vold.post_fs_data_done 1
 
     # Separate location for storing security policy files on data
-    mkdir /data/security 0700 system system
+    mkdir /data/security 0711 system system
+    mkdir /data/security/spota 0711 system system
 
     # Restorecon for backup data file
     mkdir /data/backup 0700 system system
     restorecon /data/backup
-
-    # obb dir for restorecon
-    mkdir /data/media/obb 0775 media_rw media_rw
-    restorecon /data/media/obb
 
 on boot
 # basic network init
@@ -499,8 +498,6 @@ on boot
     chmod 0644 /efs/h2k.dat
     mkdir /data/misc/radio/hatp 0775 radio system
 
-    start sysinit
-
     class_start core
     class_start main
 
@@ -535,8 +532,6 @@ on property:vold.decrypt=trigger_shutdown_framework
     class_reset main
 
 on property:selinux.reload_policy=1
-    restart ueventd
-    restart installd
     chown system system /sys/fs/selinux/enforce
     chown -R system system /sys/fs/selinux/booleans
     chown system system /sys/fs/selinux/commit_pending_bools
@@ -695,10 +690,6 @@ service drm /system/bin/drmserver
 #   group drm system inet drmrpc sdcard_r
 # ]
 
-service sysinit /system/bin/logwrapper /sbin/busybox run-parts /system/etc/init.d
-    disabled
-    oneshot
-
 service media /system/bin/mediaserver
     class main
     user media
@@ -740,6 +731,11 @@ service containersetup /system/bin/containersetup
 service ipruleset /system/bin/ipruleset
     class main
     group vpn net_admin inet net_raw
+    oneshot
+
+service createsystemfile /system/bin/createsystemfile
+    class main
+    group system
 	disabled
     oneshot
 
@@ -805,6 +801,7 @@ on property:init.svc.media=restarting
 on property:init.svc.bootanim=stopped
     restorecon /data/media
     restorecon /data/media/obb
+    setprop selinux.reload_policy 1
     start auditd
 
 # SISO-ANDR-PERF :: START Changing scheduler to cfq after boot complete
@@ -825,7 +822,7 @@ service secure_storage /system/bin/secure_storage_daemon
     group system
     disabled
 
-on property:init.svc.prepare-ssdaemon=stopped
+on property:ro.securestorage.ready=true
     start secure_storage
 
 # init Adam Kernel

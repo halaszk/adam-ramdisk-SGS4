@@ -2,7 +2,6 @@ import init.universal5410.usb.rc
 import init.wifi.rc
 
 on init
-    start watchdogd
     
      # For Absolute Persistence Partition
     mkdir /persdata 0755 system system
@@ -500,6 +499,7 @@ service setup_fs /system/bin/setup_fs \
 service watchdogd /sbin/watchdogd 10 20
     class core
     seclabel u:r:watchdogd:s0
+    disabled
 
 # 3D init
 service pvrsrvctl /system/vendor/bin/pvrsrvctl --start --no-module
@@ -528,7 +528,7 @@ service cpboot-daemon /sbin/cbd -d -p 13
 
 # AT Distributor for factory test
 service at_distributor /system/bin/at_distributor
-    class main
+    class late_start
     user root
     group radio misc log
 
@@ -575,11 +575,14 @@ service bugreport /system/bin/bugmailer.sh -v
 on property:ro.dumpstate.dmesg=1
     write /proc/sys/kernel/dmesg_restrict 0
 
+# Kick watchdogd if debug_level is low
+on property:ro.debug_level=0x4f4c
+    start watchdogd
+
 # Runtime Compcache
-service rtccinit /system/bin/rtcc_init -a 400M
+service rtccd /system/bin/rtccd -a 400M
     class core
     user root
-    oneshot
 
 # Bluetooth LE 2 wired Test
 service LE_dut_cmd_on /system/bin/bttestintf enable
@@ -608,3 +611,10 @@ on property:ro.debuggable=1
 
 #WFD
     chmod 0666 /dev/graphics/fb1
+
+# To reduce power consumption when setupwizard is running
+on property:persist.sys.setupwizard=START
+        write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1000000
+
+on property:persist.sys.setupwizard=FINISH
+        write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1600000

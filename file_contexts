@@ -279,8 +279,9 @@
 /data/misc/audio(/.*)?	u:object_r:audio_data_file:s0
 /data/misc/radio(/.*)?	u:object_r:radio_data_file:s0
 /data/system/users(/.*)/wallpaper	u:object_r:wallpaper_file:s0
-/data/.container_[1-9](/.*)	u:object_r:container_app_data_backend:s0
-/data/container/.sdcontainer_[1-9](/.*)	u:object_r:container_app_data_backend:s0
+/data/.container_[1-9](/.*)?	u:object_r:container_app_data_backend:s0
+/data/container(/.*)?	u:object_r:container_app_data_backend:s0
+/data/clipboard/knox(/.*)?  u:object_r:knox_clipboard_file:s0
 
 ############################# 
 # MISC partition file
