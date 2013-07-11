@@ -59,14 +59,6 @@ echo "60000" > /sys/devices/system/cpu/cpufreq/ondemand/sampling_rate
 
 sync
 
-echo "20" > /proc/sys/vm/dirty_background_ratio
-echo "80" > /proc/sys/vm/dirty_ratio
-echo "3" > /proc/sys/vm/drop_caches
-echo "100" > /proc/sys/vm/swappiness
-echo "120" > /proc/sys/vm/vfs_cache_pressure
-
-sync
-
 if [ -d /system/etc/init.d ]; then
   /sbin/busybox run-parts /system/etc/init.d
 fi;

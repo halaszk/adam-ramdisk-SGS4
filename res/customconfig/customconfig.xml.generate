@@ -19,17 +19,17 @@ echo '
     </settingsPane>
 
     <settingsPane description="CPU scaling" name="CPU voltage control">
-      <seekbar description="Set the maximum freqency the CPU scales down to. Default: 1600 MHz." 
+      <seekbar description="Set the maximum freqency the CPU scales up to. Default: 1600 MHz."
                name="CPU max frequency" 
                action="cpugeneric /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq"
-               unit="KHz" reversed="false" step="100000"
+               unit="KHz" reversed="false" step="50000"
                min="250000" 
                max="1600000" />
 
       <seekbar description="Set the minimum freqency the CPU scales down to. Default: 250 MHz." 
                name="CPU min frequency" 
                action="cpugeneric /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq"
-               unit="KHz" reversed="false" step="100000"
+               unit="KHz" reversed="false" step="50000"
                min="250000" 
                max="1600000" />
 
@@ -76,7 +76,6 @@ echo '
                 label="Enable mono output"/>
 
     </settingsPane>
-
 
     <settingsPane description="Speaker amplification increases volume on the external speaker and earpiece. Speaker volumes are expressed as deltas to Samsung audio profiles, so not to completely override them." 
 		name="Speaker Amplification">
@@ -264,23 +263,9 @@ echo '
                 unit="" min="-16" reversed="false" step="1" max="16"/>
 
     </settingsPane>
-  </settingsTab>
+   </settingsTab>
 
-  <settingsTab name="Android Logger">
-
-	<settingsPane name="Android Logger" 
-                  description="Android Logger is a useful tool for developers to test and debug their Applications, but it can be disabled on normal use, this may give you better performance.">
-
-      <checkbox description="It is recommended to disable Android Logger if you do not need it" 
-                name="Enable/Disable Android Logger" 
-                action="generic01 /sys/kernel/logger_mode/logger_mode" 
-                label="Enable Android logger"/>
-
-    </settingsPane>
-
-  </settingsTab>
-
-  <settingsTab name="I/O">
+   <settingsTab name="I/O">
     <settingsPane description="Set the active I/O elevator algorithm. The scheduler decides how to handle I/O requests and how to handle them. FIOPS is the everyday recommended default scheduler."  
                   name="I/O schedulers">' >> $XML
 
@@ -326,6 +311,20 @@ echo '
 
   </settingsTab>
 
+  <settingsTab name="Android Logger">
+
+	<settingsPane name="Android Logger" 
+                  description="Android Logger is a useful tool for developers to test and debug their Applications, but it can be disabled on normal use, this may give you better performance.">
+
+      <checkbox description="It is recommended to disable Android Logger if you do not need it" 
+                name="Enable/Disable Android Logger" 
+                action="generic01 /sys/kernel/logger_mode/logger_mode" 
+                label="Enable Android logger"/>
+
+    </settingsPane>
+
+  </settingsTab>
+  
 </settingsRoot>' >> $XML
 
 chmod 777 $XML

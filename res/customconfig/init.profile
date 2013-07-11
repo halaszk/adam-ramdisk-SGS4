@@ -2,5 +2,3 @@ internal_iosched=cfq
 sd_iosched=cfq
 logger_mode=off
 internal_read_ahead_kb=256
-digital_abs_headphone_left=-8
-digital_abs_headphone_right=-8
