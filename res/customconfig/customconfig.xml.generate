@@ -142,128 +142,110 @@ echo '
     </settingsPane>
   </settingsTab>
 
-  <settingsTab name="Screen">
-    <settingsPane description="mobile Digital Natural Image engine control. Samsungs hardware image post-processor controls virtually any image manipulation. All control master switches, if left as delta controls, will negate the sequence setting if checked. Master sequence has SCR and CS enabled by default."
-		  name="Global controls">
+  <settingsTab name="Battery">
 
-      <checkbox  description="Register intercept acts like a hook and will enable catching scenario settings and modifying them through delta controls. If a scenario does not have a setting (register) in its base sequence, then it cannot be modified by the hook."
-                name="Register intercept" 
-                action="generic01 /sys/class/misc/mdnie/hook_intercept"
-                label="Enable register hook"/>
+    <settingsPane description="Device charging currents are composed of input current coming into the device (Nominal 5V) and charge current fed to the battery (Battery Charge Voltage). Charger detection divides charging cable types into several categories as described below. Input current is the sum of device load and charging load. If charging current exceeds input load, then charging current is dynamically adjusted. For avoiding battery deterioration, charging currents of less than 0.7 Coloumb are advised; ex. 2600mAh (Capacity) * 0.7C = ~1820mA." name="Charging currents">
 
-      <checkbox  description="Enabling the master sequence will disable and ignore Samsungs profiles and scenarios, the ROM controls will be disabled."
-                name="Master sequence" 
-                action="generic01 /sys/class/misc/mdnie/sequence_intercept"
-                label="Enable master sequence"/>
+      <button description="Detect the currently connected charging source." name="" action="charge-source" label="Detect live charging source"/>
 
-    </settingsPane>
+      <seekBar  description="AC or mains input current limit applied to designated dedicated chargers and corresponding cables. Default: ' >> $XML `cat /sys/devices/platform/sec-battery/ac_input_curr` 'mA" 
+		name="AC / Mains Input Current" 
+                action="generic /sys/devices/platform/sec-battery/ac_input_curr"
+                unit="mA" min="400" reversed="false" step="50" max="3000"/>
+
+      <seekBar  description="AC or mains charge current supplied to battery during charging. Default: ' >> $XML `cat /sys/devices/platform/sec-battery/ac_chrg_curr` 'mA" 
+		name="AC / Mains Charge Current" 
+                action="generic /sys/devices/platform/sec-battery/ac_chrg_curr"
+                unit="mA" min="400" reversed="false" step="50" max="3000"/>
 
 
-    <settingsPane description="Uses mDNIe to bypass the backlight driver brightness and decrease brightness by reducing luminance on the the channel RGB values. It allows to reduce brightness beyond the stock minimum."
-		  name="Digital screen brightness">
 
-      <seekBar  description="The amount of luminance to be shaved off from the colour channel components."
-		name="Brightness reduction"
-                action="generic /sys/class/misc/mdnie/brightness_reduction"
-                unit="" min="0" reversed="false" step="1" max="128"/>
+      <seekBar  description="Standard Downstream Port input current limit applied on plain and compliant USB data connectivity ports. Default: ' >> $XML `cat /sys/devices/platform/sec-battery/sdp_input_curr` 'mA" 
+		name="SDP Input Current" 
+                action="generic /sys/devices/platform/sec-battery/sdp_input_curr"
+                unit="mA" min="400" reversed="false" step="25" max="1500"/>
 
-      <seekBar  description="The stock backlight driver ignores brightness values below 10 (0-255) and values below that point do not have any effect on brightness. The takeover point is the point in the brightness curve where the digital brightness reduction takes effect. The brightness reduction is weighted linearly from full configured value to zero on the range of zero brigtness to the takeover point. If the takeover point is beyond 10, then both hardware and digital brightness reduction can take place. This can help with having a less abrupt brightness curve caused by the digital reduction."
-		name="Takeover point"
-                action="generic /sys/class/misc/mdnie/brightness_takeover_point"
-                unit="" min="0" reversed="false" step="1" max="64"/>
+      <seekBar  description="Standard Downstream Port charge current supplied to battery during charging. Default: ' >> $XML `cat /sys/devices/platform/sec-battery/sdp_chrg_curr` 'mA" 
+		name="SDP Charge Current" 
+                action="generic /sys/devices/platform/sec-battery/sdp_chrg_curr"
+                unit="mA" min="400" reversed="false" step="25" max="1500"/>
 
-      <seekBar  description="Positive delta to be applied on top system brightness. Used only for the digital reduction logic during stock ROM auto-brightness activation, can be used to brighten back up the reduction value by shifting the interpreted brightness value without sacrificing minimum brightness in manual mode."
-		name="Auto-brightness input delta"
-                action="generic /sys/class/misc/mdnie/brightness_input_delta"
-                unit="" min="0" reversed="false" step="1" max="64"/>
 
-    </settingsPane>
 
-    <settingsPane description=""
-		  name="Digital edge enhancement control">
+      <seekBar  description="Dedicated Charging Port input current limit applied when detection of a standalone charger happens, or if a USB connector with shorted D+ and D- pins is attached. Default: ' >> $XML `cat /sys/devices/platform/sec-battery/dcp_ac_input_curr` 'mA" 
+		name="DCP Input Current" 
+                action="generic /sys/devices/platform/sec-battery/dcp_input_curr"
+                unit="mA" min="400" reversed="false" step="50" max="2000"/>
 
-      <checkbox  description=""
-                name="Edge enhancement switch" 
-                action="generic01 /sys/class/misc/mdnie/hook_control/s_edge_enhancement"
-                label="Enable edge enhancement"/>
+      <seekBar  description="Dedicated Charging Port charge current supplied to battery during charging. Default: ' >> $XML `cat /sys/devices/platform/sec-battery/dcp_ac_chrg_curr` 'mA"   
+		name="DCP Charge Current."
+                action="generic /sys/devices/platform/sec-battery/dcp_chrg_curr"
+                unit="mA" min="400" reversed="false" step="50" max="2000"/>
 
-      <seekBar  description=""
-		name="Amount"
-                action="generic /sys/class/misc/mdnie/hook_control/de_positive_e"
-                unit="" min="-128" reversed="false" step="1" max="128"/>
 
-      <seekBar  description=""
-		name="Radius"
-                action="generic /sys/class/misc/mdnie/hook_control/de_positive_f"
-                unit="" min="-128" reversed="false" step="1" max="128"/>
 
-      <seekBar  description=""
-		name="Threshold"
-                action="generic /sys/class/misc/mdnie/hook_control/de_positive_b"
-                unit="" min="-128" reversed="false" step="1" max="128"/>
+      <seekBar  description="Charging Downstream Port input current limit applied on BCS 1.1 special charging USB data connectivity ports. Default: ' >> $XML `cat /sys/devices/platform/sec-battery/cdp_input_curr` 'mA" 
+		name="CDP Input Current" 
+                action="generic /sys/devices/platform/sec-battery/cdp_input_curr"
+                unit="mA" min="400" reversed="false" step="50" max="1500"/>
 
-    </settingsPane>
+      <seekBar  description="Charging Downstream Port and Mains charge current supplied to battery during charging. Default: ' >> $XML `cat /sys/devices/platform/sec-battery/cdp_chrg_curr` 'mA"  
+		name="CDP Charge Current"
+                action="generic /sys/devices/platform/sec-battery/cdp_chrg_curr"
+                unit="mA" min="400" reversed="false" step="50" max="1500"/>
 
-    <settingsPane description="Chroma saturation works in the HSL colour space, modifying saturation will dilute the hue with white or darken with black. Variations in chroma are achieved by adding different amounts of a neutral gray of the same value as the color you want to alter."
-		  name="Chroma saturation control">
 
-      <seekBar  description="Saturation weight/multipliers for RGB/YCM chroma gains"
-		name="Chroma saturation weight"
-                action="generic /sys/class/misc/mdnie/hook_control/cs_weight"
-                unit="" min="-20" reversed="false" step="1" max="20"/>
 
-      <seekBar  description=""
-		name="Red gain"
-                action="generic /sys/class/misc/mdnie/hook_control/cs_red"
-                unit="" min="-8" reversed="false" step="1" max="8"/>
+      <seekBar  description="Accessory Charging Adapter input current limit applied to various dedicated USB accessories. Default: ' >> $XML `cat /sys/devices/platform/sec-battery/aca_input_curr` 'mA" 
+		name="ACA Input Current" 
+                action="generic /sys/devices/platform/sec-battery/aca_input_curr"
+                unit="mA" min="100" reversed="false" step="25" max="1000"/>
 
-      <seekBar  description=""
-		name="Green gain"
-                action="generic /sys/class/misc/mdnie/hook_control/cs_green"
-                unit="" min="-8" reversed="false" step="1" max="8"/>
+      <seekBar  description="Accessory Charging Adapter charge current supplied to battery during charging. Default: ' >> $XML `cat /sys/devices/platform/sec-battery/aca_chrg_curr` 'mA"  
+		name="ACA Charge Current"
+                action="generic /sys/devices/platform/sec-battery/aca_chrg_curr"
+                unit="mA" min="100" reversed="false" step="25" max="1000"/>
 
-      <seekBar  description=""
-		name="Blue gain"
-                action="generic /sys/class/misc/mdnie/hook_control/cs_blue"
-                unit="" min="-8" reversed="false" step="1" max="8"/>
 
-      <seekBar  description=""
-		name="Yellow gain"
-                action="generic /sys/class/misc/mdnie/hook_control/cs_yellow"
-                unit="" min="-8" reversed="false" step="1" max="8"/>
 
-      <seekBar  description=""
-		name="Cyan gain"
-                action="generic /sys/class/misc/mdnie/hook_control/cs_cyan"
-                unit="" min="-8" reversed="false" step="1" max="8"/>
+      <seekBar  description="Miscaenellous input current limit applied to any other unidentifiable charging source. Default: ' >> $XML `cat /sys/devices/platform/sec-battery/misc_input_curr` 'mA" 
+		name="Misc Input Current" 
+                action="generic /sys/devices/platform/sec-battery/misc_input_curr"
+                unit="mA" min="100" reversed="false" step="50" max="2000"/>
 
-      <seekBar  description=""
-		name="Magenta gain"
-                action="generic /sys/class/misc/mdnie/hook_control/cs_magenta"
-                unit="" min="-8" reversed="false" step="1" max="8"/>
+      <seekBar  description="Miscaenellous charge current supplied to battery during charging. Default: ' >> $XML `cat /aca/devices/platform/sec-battery/misc_chrg_curr` 'mA"  
+		name="Misc Charge Current"
+                action="generic /sys/devices/platform/sec-battery/misc_chrg_curr"
+                unit="mA" min="100" reversed="false" step="50" max="2000"/>
+
+
+
+      <seekBar  description="Wireless input current limit applied to the wireless charging port. Default: ' >> $XML `cat /sys/devices/platform/sec-battery/wpc_input_curr` 'mA" 
+		name="WPC Input Current" 
+                action="generic /sys/devices/platform/sec-battery/wpc_input_curr"
+                unit="mA" min="400" reversed="false" step="25" max="1500"/>
+
+      <seekBar  description="Wireless charge current supplied to battery during charging. Default: ' >> $XML `cat /aca/devices/platform/sec-battery/wpc_chrg_curr` 'mA"  
+		name="WPC Charge Current"
+                action="generic /sys/devices/platform/sec-battery/wpc_chrg_curr"
+                unit="mA" min="400" reversed="false" step="25" max="1500"/>
 
     </settingsPane>
 
-    <settingsPane description="The controls is divided in 8 channels, RGB, YCM, W and K. SCR controls are RGB modifiers on each of the controls altering the primary luminosities on that channel."
-		  name="White colour balance">
+    <settingsPane description="Input and charging current are limited to certain maximas if the screen is turned on to avoid elevated heat generation. Normal charging limits are applied when the screen is off." name="Special Mains limits">
 
-      <seekBar  description="Red in white"
-		name="Red"
-                action="generic /sys/class/misc/mdnie/hook_control/scr_white_red"
-                unit="" min="-16" reversed="false" step="1" max="16"/>
+      <seekBar  description="AC or mains screen-on input current limit. Default: 1200mA" 
+		name="AC / Mains Input Current" 
+                action="stupid-hex-no-prefix /sys/devices/platform/sec-battery/siop_input_limit"
+                unit="mA" min="400" reversed="false" step="50" max="3000"/>
 
-      <seekBar  description="Green in white"
-		name="Green"
-                action="generic /sys/class/misc/mdnie/hook_control/scr_white_green"
-                unit="" min="-16" reversed="false" step="1" max="16"/>
-
-      <seekBar  description="Blue in white"
-		name="Blue"
-                action="generic /sys/class/misc/mdnie/hook_control/scr_white_blue"
-                unit="" min="-16" reversed="false" step="1" max="16"/>
+      <seekBar  description="AC or mains screen-on charge current limit. Default: 1000mA" 
+		name="AC / Mains Charge Current" 
+                action="stupid-hex-no-prefix /sys/devices/platform/sec-battery/siop_charge_limit"
+                unit="mA" min="400" reversed="false" step="50" max="3000"/>
 
     </settingsPane>
-   </settingsTab>
+  </settingsTab>
 
    <settingsTab name="I/O">
     <settingsPane description="Set the active I/O elevator algorithm. The scheduler decides how to handle I/O requests and how to handle them. FIOPS is the everyday recommended default scheduler."  
@@ -311,7 +293,7 @@ echo '
 
   </settingsTab>
 
-  <settingsTab name="Android Logger">
+  <settingsTab name="Logger">
 
 	<settingsPane name="Android Logger" 
                   description="Android Logger is a useful tool for developers to test and debug their Applications, but it can be disabled on normal use, this may give you better performance.">
